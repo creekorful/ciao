@@ -1,0 +1,24 @@
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - id: ciao
+    main: ./ciao.go
+    binary: ciao
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-{{ .ShortCommit }}"
+
+release:
+  prerelease: true
