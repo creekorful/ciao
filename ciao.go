@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// Context is the application in-memory context
 type Context struct {
 	Redirects map[string]string `json:"redirects"`
 }
