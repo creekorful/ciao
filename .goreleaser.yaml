@@ -14,6 +14,15 @@ builds:
     env:
       - CGO_ENABLED=0
 
+dockers:
+  - goos: linux
+    goarch: amd64
+    image_templates:
+      - "creekorful/ciao:latest"
+      - "creekorful/ciao:{{ replace .Tag \"v\" \"\" }}"
+      - "creekorful/ciao:{{ .Major }}"
+    skip_push: false
+
 checksum:
   name_template: 'checksums.txt'
 
