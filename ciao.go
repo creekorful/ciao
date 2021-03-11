@@ -28,7 +28,7 @@ func main() {
 	}
 	_ = f.Close()
 
-	log.Printf("Successfully loaded %d redirections", len(ctx.Redirects))
+	log.Printf("Successfully loaded %d redirects", len(ctx.Redirects))
 
 	http.HandleFunc("/", redirectHandler(&ctx))
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -41,7 +41,7 @@ func redirectHandler(c *Context) func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Location", target)
 			w.WriteHeader(http.StatusTemporaryRedirect)
 		} else {
-			log.Printf("%s - No redirection found for: %s", r.RemoteAddr, r.Host)
+			log.Printf("%s - No redirect found for: %s", r.RemoteAddr, r.Host)
 			w.WriteHeader(http.StatusNotFound)
 		}
 	}
