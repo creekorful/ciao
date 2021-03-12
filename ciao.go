@@ -10,7 +10,13 @@ import (
 
 // Config is the application configuration
 type Config struct {
-	Redirects map[string]string `json:"redirects"`
+	Redirects map[string]Redirect `json:"redirects"`
+}
+
+// Redirect represent a redirection rule
+type Redirect struct {
+	Location string `json:"location"`
+	Code     int    `json:"code"`
 }
 
 func main() {
@@ -37,10 +43,16 @@ func main() {
 
 func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if target, exist := c.Redirects[r.Host]; exist {
-			log.Printf("%s - Redirecting %s -> %s", r.RemoteAddr, r.Host, target)
-			w.Header().Add("Location", target)
-			w.WriteHeader(http.StatusTemporaryRedirect)
+		if redirect, exist := c.Redirects[r.Host]; exist {
+			code := http.StatusTemporaryRedirect
+			if redirect.Code != 0 {
+				code = redirect.Code
+			}
+
+			log.Printf("%s - [%d] Redirecting %s -> %s", r.RemoteAddr, code, r.Host, redirect.Location)
+
+			w.Header().Add("Location", redirect.Location)
+			w.WriteHeader(code)
 		} else {
 			log.Printf("%s - No redirect found for: %s", r.RemoteAddr, r.Host)
 			w.WriteHeader(http.StatusNotFound)
