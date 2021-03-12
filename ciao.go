@@ -50,12 +50,12 @@ func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 				code = redirect.Code
 			}
 
-			remoteIp := r.RemoteAddr
+			remoteIP := r.RemoteAddr
 			if c.UseXForwarded {
-				remoteIp = getRealIP(r)
+				remoteIP = getRealIP(r)
 			}
 
-			log.Printf("%s - [%d] Redirecting %s -> %s", remoteIp, code, r.Host, redirect.Location)
+			log.Printf("%s - [%d] Redirecting %s -> %s", remoteIP, code, r.Host, redirect.Location)
 
 			w.Header().Add("Location", redirect.Location)
 			w.WriteHeader(code)
