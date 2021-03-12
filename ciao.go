@@ -8,8 +8,8 @@ import (
 	"os"
 )
 
-// Context is the application in-memory context
-type Context struct {
+// Config is the application configuration
+type Config struct {
 	Redirects map[string]string `json:"redirects"`
 }
 
@@ -23,19 +23,19 @@ func main() {
 		panic(err)
 	}
 
-	var ctx Context
-	if err := json.NewDecoder(f).Decode(&ctx); err != nil {
+	var config Config
+	if err := json.NewDecoder(f).Decode(&config); err != nil {
 		panic(err)
 	}
 	_ = f.Close()
 
-	log.Printf("Successfully loaded %d redirects", len(ctx.Redirects))
+	log.Printf("Successfully loaded %d redirections", len(config.Redirects))
 
-	http.HandleFunc("/", redirectHandler(&ctx))
+	http.HandleFunc("/", redirectHandler(&config))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func redirectHandler(c *Context) func(w http.ResponseWriter, r *http.Request) {
+func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if target, exist := c.Redirects[r.Host]; exist {
 			log.Printf("%s - Redirecting %s -> %s", r.RemoteAddr, r.Host, target)
