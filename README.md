@@ -17,8 +17,12 @@ Create a `ciao.json` config file where you want, with your redirections:
       "location": "https://example.org",
       "code": 308
     }
-  }
+  },
+  "use_x_forwarded": false
 }
 ```
 
 and then execute ciao: `./ciao --config <path-to-config>`
+
+nb: if `use_x_forwarded` is true, then ciao will use the `X-Forwarded*` headers to determinate remote IP address. (
+should only enabled if behind reverse proxy)

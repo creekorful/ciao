@@ -10,7 +10,8 @@ import (
 
 // Config is the application configuration
 type Config struct {
-	Redirects map[string]Redirect `json:"redirects"`
+	Redirects     map[string]Redirect `json:"redirects"`
+	UseXForwarded bool                `json:"use_x_forwarded"`
 }
 
 // Redirect represent a redirection rule
@@ -49,7 +50,12 @@ func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 				code = redirect.Code
 			}
 
-			log.Printf("%s - [%d] Redirecting %s -> %s", r.RemoteAddr, code, r.Host, redirect.Location)
+			remoteIp := r.RemoteAddr
+			if c.UseXForwarded {
+				remoteIp = getRealIP(r)
+			}
+
+			log.Printf("%s - [%d] Redirecting %s -> %s", remoteIp, code, r.Host, redirect.Location)
 
 			w.Header().Add("Location", redirect.Location)
 			w.WriteHeader(code)
@@ -58,4 +64,15 @@ func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotFound)
 		}
 	}
+}
+
+func getRealIP(r *http.Request) string {
+	address := r.Header.Get("X-Real-Ip")
+	if address == "" {
+		address = r.Header.Get("X-Forwarded-For")
+	}
+	if address == "" {
+		address = r.RemoteAddr
+	}
+	return address
 }
