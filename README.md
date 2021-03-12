@@ -9,8 +9,14 @@ Create a `ciao.json` config file where you want, with your redirections:
 ```json
 {
   "redirects": {
-    "example.com": "https://example.org",
-    "www.example.com": "https://example.org"
+    "example.com": {
+      "location": "https://example.org",
+      "code": 307
+    },
+    "www.example.com": {
+      "location": "https://example.org",
+      "code": 308
+    }
   }
 }
 ```
