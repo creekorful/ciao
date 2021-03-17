@@ -9,6 +9,10 @@ Create a `ciao.json` config file where you want, with your redirections:
 ```json
 {
   "redirects": {
+    "example.com/blog": {
+      "location": "https://blog.example.org",
+      "code": 307
+    },
     "example.com": {
       "location": "https://example.org",
       "code": 307
@@ -25,4 +29,4 @@ Create a `ciao.json` config file where you want, with your redirections:
 and then execute ciao: `./ciao --config <path-to-config>`
 
 nb: if `use_x_forwarded` is true, then ciao will use the `X-Forwarded*` headers to determinate remote IP address. (
-should only enabled if behind reverse proxy)
+should only enabled if behind trusted reverse proxy)
