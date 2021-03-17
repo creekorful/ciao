@@ -8,43 +8,51 @@ import (
 
 func TestRedirection(t *testing.T) {
 	type test struct {
-		redirect string
-		location string
-		code     int
+		url              string
+		expectedLocation string
+		expectedCode     int
+
+		redirects map[string]Redirect
 	}
 
 	tests := []test{
 		{
-			redirect: "blog.creekorful.com",
-			location: "https://blog.creekorful.dev",
-			code:     308,
+			url:              "https://blog.creekorful.com",
+			expectedLocation: "https://blog.creekorful.dev",
+			expectedCode:     307,
+			redirects: map[string]Redirect{
+				"blog.creekorful.com": {
+					Location: "https://blog.creekorful.dev",
+					Code:     307,
+				},
+			},
+		},
+		{
+			url:              "https://blog.creekorful.com",
+			expectedLocation: "",
+			expectedCode:     404,
+			redirects:        map[string]Redirect{},
 		},
 	}
 
 	for _, test := range tests {
-		req, err := http.NewRequest("GET", "", nil)
+		req, err := http.NewRequest("GET", test.url, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
-		req.Host = test.redirect
 
-		c := &Config{Redirects: map[string]Redirect{
-			test.redirect: {
-				Location: test.location,
-				Code:     test.code,
-			},
-		}}
+		c := &Config{Redirects: test.redirects}
 
 		rr := httptest.NewRecorder()
 		handler := http.HandlerFunc(redirectHandler(c))
 
 		handler.ServeHTTP(rr, req)
 
-		if status := rr.Code; status != test.code {
-			t.Errorf("handler returned wrong status code: got %v want %v", status, test.code)
+		if status := rr.Code; status != test.expectedCode {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, test.expectedCode)
 		}
-		if location := rr.Header().Get("Location"); location != test.location {
-			t.Errorf("handler returned wrong status location: got %v want %v", location, test.location)
+		if location := rr.Header().Get("Location"); location != test.expectedLocation {
+			t.Errorf("handler returned wrong status location: got %v want %v", location, test.expectedLocation)
 		}
 	}
 }
