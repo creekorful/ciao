@@ -21,14 +21,14 @@ type Redirect struct {
 	Code     int    `json:"code"`
 }
 
-func (r *Config) findRedirect(u *url.URL) (Redirect, bool) {
+func (r *Config) findRedirect(host string, u *url.URL) (Redirect, bool) {
 	// first of all check if there's an exact rule available (host + path)
-	if val, exist := r.Redirects[u.Host+u.Path]; exist {
+	if val, exist := r.Redirects[host+u.Path]; exist {
 		return val, true
 	}
 
 	// otherwise fallback to host rule
-	val, exist := r.Redirects[u.Host]
+	val, exist := r.Redirects[host]
 	return val, exist
 }
 
@@ -56,7 +56,7 @@ func main() {
 
 func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if redirect, exist := c.findRedirect(r.URL); exist {
+		if redirect, exist := c.findRedirect(r.Host, r.URL); exist {
 			code := http.StatusTemporaryRedirect
 			if redirect.Code != 0 {
 				code = redirect.Code
