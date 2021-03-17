@@ -1,5 +1,5 @@
 FROM scratch
 
-ADD ciao /usr/bin/ciao
+ADD direktion /usr/bin/direktion
 
-ENTRYPOINT ["/usr/bin/ciao"]
+ENTRYPOINT ["/usr/bin/direktion"]

@@ -44,7 +44,7 @@ func TestRedirection(t *testing.T) {
 				},
 				"blog.creekorful.com": {
 					Location: "https://blog.creekorful.dev",
-					Code: 308,
+					Code:     308,
 				},
 			},
 		},

@@ -1,10 +1,10 @@
-# ciao
+# direktion
 
-Very-simple & idiomatic HTTP redirect server.
+Very-simple & idiomatic HTTP URL rewriter.
 
 ## How to use it?
 
-Create a `ciao.json` config file where you want, with your redirections:
+Create a `direktion.json` config file where you want, with your redirections:
 
 ```json
 {
@@ -26,7 +26,7 @@ Create a `ciao.json` config file where you want, with your redirections:
 }
 ```
 
-and then execute ciao: `./ciao --config <path-to-config>`
+and then execute direktion: `./direktion --config <path-to-config>`
 
-nb: if `use_x_forwarded` is true, then ciao will use the `X-Forwarded*` headers to determinate remote IP address. (
+nb: if `use_x_forwarded` is true, then direktion will use the `X-Forwarded*` headers to determinate remote IP address. (
 should only enabled if behind trusted reverse proxy)

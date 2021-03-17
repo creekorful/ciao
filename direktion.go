@@ -33,7 +33,7 @@ func (r *Config) findRedirect(u *url.URL) (Redirect, bool) {
 }
 
 func main() {
-	configFlag := flag.String("config", "ciao.json", "path to the config file")
+	configFlag := flag.String("config", "direktion.json", "path to the config file")
 
 	flag.Parse()
 
