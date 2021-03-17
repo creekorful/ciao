@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -18,6 +19,17 @@ type Config struct {
 type Redirect struct {
 	Location string `json:"location"`
 	Code     int    `json:"code"`
+}
+
+func (r *Config) findRedirect(u *url.URL) (Redirect, bool) {
+	// first of all check if there's an exact rule available (host + path)
+	if val, exist := r.Redirects[u.Host+u.Path]; exist {
+		return val, true
+	}
+
+	// otherwise fallback to host rule
+	val, exist := r.Redirects[u.Host]
+	return val, exist
 }
 
 func main() {
@@ -44,7 +56,7 @@ func main() {
 
 func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if redirect, exist := c.Redirects[r.Host]; exist {
+		if redirect, exist := c.findRedirect(r.URL); exist {
 			code := http.StatusTemporaryRedirect
 			if redirect.Code != 0 {
 				code = redirect.Code
@@ -55,7 +67,7 @@ func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 				remoteIP = getRealIP(r)
 			}
 
-			log.Printf("%s - [%d] Redirecting %s -> %s", remoteIP, code, r.Host, redirect.Location)
+			log.Printf("%s - [%d] Redirecting %s -> %s", remoteIP, code, r.URL, redirect.Location)
 
 			w.Header().Add("Location", redirect.Location)
 			w.WriteHeader(code)

@@ -33,6 +33,21 @@ func TestRedirection(t *testing.T) {
 			expectedCode:     404,
 			redirects:        map[string]Redirect{},
 		},
+		{
+			url:              "https://blog.creekorful.com/something-cool",
+			expectedLocation: "https://something-cool.creekorful.com/blog",
+			expectedCode:     307,
+			redirects: map[string]Redirect{
+				"blog.creekorful.com/something-cool": {
+					Location: "https://something-cool.creekorful.com/blog",
+					Code:     307,
+				},
+				"blog.creekorful.com": {
+					Location: "https://blog.creekorful.dev",
+					Code: 308,
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
