@@ -48,6 +48,17 @@ func TestRedirection(t *testing.T) {
 				},
 			},
 		},
+		{
+			url:              "https://creekorful.me/2019/01/12/terminews",
+			expectedLocation: "https://blog.creekorful.com/2019/01/12/terminews",
+			expectedCode:     308,
+			redirects: map[string]Redirect{
+				"creekorful.me": {
+					Location: "https://blog.creekorful.com/$request_uri",
+					Code:     308,
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
 // Config is the application configuration
@@ -57,15 +58,21 @@ func main() {
 func redirectHandler(c *Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if redirect, exist := c.findRedirect(r.Host, r.URL); exist {
+			// determinate status code to use
 			code := http.StatusTemporaryRedirect
 			if redirect.Code != 0 {
 				code = redirect.Code
 			}
 
+			// determinate remote ip address to display
 			remoteIP := r.RemoteAddr
 			if c.UseXForwarded {
 				remoteIP = getRealIP(r)
 			}
+
+			// extrapolate variables in location
+			redirect.Location = strings.Replace(redirect.Location, "$request_uri",
+				strings.TrimPrefix(r.URL.Path, "/"), 1)
 
 			log.Printf("%s - [%d] Redirecting %s%s -> %s", remoteIP, code, r.Host, r.URL.Path, redirect.Location)
 

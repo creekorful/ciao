@@ -10,7 +10,7 @@ Create a `direktion.json` config file where you want, with your redirections:
 {
   "redirects": {
     "example.com/blog": {
-      "location": "https://blog.example.org",
+      "location": "https://blog.example.org/$request_uri",
       "code": 307
     },
     "example.com": {
